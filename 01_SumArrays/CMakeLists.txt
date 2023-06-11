@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.22)
 
 # 项目名称
-project(CUDAdemo CUDA)
+project(ArraySum CUDA)
 
 # cuda版本
 set(CMAKE_CUDA_STANDARD 14)
@@ -14,8 +14,7 @@ add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 # 导入指定目录下的所有源码
 aux_source_directory(Common DIR_SRCS)
 
-# 打印hello world
-add_executable(CUDAdemo main.cu ArraySum.cu)
+add_executable(ArraySum SumArrays.cu)
 
-set_target_properties(CUDAdemo PROPERTIES
+set_target_properties(ArraySum PROPERTIES
         CUDA_SEPARABLE_COMPILATION ON)
