@@ -7,14 +7,14 @@
 
 int main(int argc, char **argv)
 {
-    //
-    omp_set_num_threads(4);
+    //线程数目不能超过CPU核数
+    auto max = omp_get_max_threads();
+    printf("max : %d\n", max);
+    omp_set_num_threads(8);
 #pragma omp parallel
     {
-        std::cout << "hello" << ", I am Thread " << omp_get_thread_num() << std::endl;
-        if (omp_get_thread_num() == 3)
-        {
-            std::cout << "I am 3" << std::endl;
-        }
+        printf("Hello World!, thread: %d\n",omp_get_thread_num());
     }
+
+    return 0;
 }

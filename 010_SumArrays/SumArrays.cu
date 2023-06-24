@@ -4,7 +4,9 @@
 
 #include <iostream>
 #include <vector>
-#include "../Common/MyUtils.h"
+
+#include "../000_Common/MyUtils.h"
+
 
 /// 在cpu上执行向量相加操作
 void sumArrays(const double *a, const double *b, double *res, int size)
@@ -70,9 +72,20 @@ int main()
     // 定义了核函数的执行配置“block”和grid”
     dim3 block(elementCount);
     dim3 grid(elementCount / block.x);
+
+    // 计时器
+    double timeStart, timeElapse;
+    timeStart = cpuSecond();
+
     // 执行核函数
     sumArraysGPU<<<grid, block>>>(dev_a, dev_b, dev_res);
-    printf("Execution configuration<<<%d,%d>>>\n", block.x, grid.x);
+
+    // 加一个同步函数等待核函数执行完毕
+    // 如果不加这个同步函数，那么测试的时间是从调用核函数，到核函数返回给主机线程的时间段，而不是核函数的执行时间
+    // 加上了同步函数后，计时是从调用核函数开始，到核函数执行完并返回给主机的时间段
+    cudaDeviceSynchronize();
+    timeElapse = cpuSecond() - timeStart;
+    printf("Execution configuration<<<%d,%d>>> Time elapsed %f sec\n", grid.x, block.x, timeElapse);
 
     CHECK(cudaMemcpy(host_resFromGPU, dev_res, elementByte, cudaMemcpyDeviceToHost));
     sumArrays(host_a, host_b, host_res, (int) elementCount);
